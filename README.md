@@ -24,7 +24,8 @@ First, create a CSV file with column names matching the properties of your entit
 
 Next, include the file in project that contains your Seed method and change the Build Action to Embedded Resource.
 
-Finally, call the SeedFromRsource extension method:
+Finally, call the SeedFromResource extension method:
 
     context.Countries.SeedFromResource("MyProject.SeedData.countries.csv", c => c.Code)
-    
+
+You also have the option to seed from a csv file on disk using SeedFromFile, or from any stream using SeedFromStream.
