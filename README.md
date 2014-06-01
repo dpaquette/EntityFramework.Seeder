@@ -29,3 +29,7 @@ Finally, call the SeedFromResource extension method:
     context.Countries.SeedFromResource("MyProject.SeedData.countries.csv", c => c.Code)
 
 You also have the option to seed from a csv file on disk using SeedFromFile, or from any stream using SeedFromStream.
+
+##Available on Nuget
+PM> Install-Package EntityFramework.Seeder.EF6
+
