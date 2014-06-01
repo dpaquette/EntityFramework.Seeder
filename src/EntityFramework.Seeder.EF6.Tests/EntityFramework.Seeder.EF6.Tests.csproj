@@ -76,10 +76,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Country.cs" />
-    <Compile Include="CountryContext.cs" />
+    <Compile Include="Domain\Country.cs" />
+    <Compile Include="Domain\CountryContext.cs" />
+    <Compile Include="Domain\ProvinceState.cs" />
     <Compile Include="when_seeding_an_empty_db_set_from_a_file.cs" />
     <Compile Include="when_seeding_an_empty_db_set_from_a_resource.cs" />
+    <Compile Include="when_seeding_a_dbset_with_related_entites.cs" />
     <Compile Include="when_seeding_a_populated_db_set_from_a_resource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -95,6 +97,7 @@
     <Content Include="CountriesFile.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="ProvinceStatesResource.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

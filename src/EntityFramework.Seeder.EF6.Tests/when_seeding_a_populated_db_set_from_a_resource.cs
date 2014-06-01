@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using EntityFramework.Seeder.EF6.Tests.Domain;
 using Given.Common;
 using Given.NUnit;
 using NUnit.Framework;
@@ -15,6 +16,7 @@ namespace EntityFramework.Seeder.EF6.Tests
         given a_populated_context = () =>
                     {
                         _context = new CountryContext();
+                        _context.DeleteAll();
                         _context.Countries.Add(new Country {Code = "AT", Name = "Austria"});
                         _context.Countries.Add(new Country { Code = "AU", Name = "Australia" });
                         _context.Countries.Add(new Country { Code = "CA", Name = "Canada" });
@@ -33,9 +35,7 @@ namespace EntityFramework.Seeder.EF6.Tests
         {            
             _context.Countries.Count().ShouldEqual(4);
         }
-
-
-
+        
         [then]
         public void the_db_set_should_contain_the_expected_country_codes_and_names()
         {

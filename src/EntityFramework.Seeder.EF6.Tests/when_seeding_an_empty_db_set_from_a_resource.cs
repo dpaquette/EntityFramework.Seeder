@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using EntityFramework.Seeder.EF6.Tests.Domain;
 using Given.Common;
 using Given.NUnit;
 using NUnit.Framework;
@@ -15,6 +16,7 @@ namespace EntityFramework.Seeder.EF6.Tests
         given an_empty_context = () =>
                     {
                         _context = new CountryContext();
+                        _context.DeleteAll();
                     };
 
         when seeding_from_a_resource = () =>
