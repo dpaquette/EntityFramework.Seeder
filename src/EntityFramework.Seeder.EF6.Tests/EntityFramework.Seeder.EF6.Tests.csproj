@@ -41,6 +41,12 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Given.Common">
+      <HintPath>..\packages\Given.0.1.5034.35988\lib\net40\Given.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Given.NUnit">
+      <HintPath>..\packages\Given.NUnit.0.1.5034.35989\lib\net40\Given.NUnit.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.core">
       <HintPath>..\packages\NUnitTestAdapter.1.0\lib\nunit.core.dll</HintPath>
       <Private>False</Private>
@@ -72,7 +78,9 @@
   <ItemGroup>
     <Compile Include="Country.cs" />
     <Compile Include="CountryContext.cs" />
-    <Compile Include="LoadFromEmbeddedResourceTest.cs" />
+    <Compile Include="when_seeding_an_empty_db_set_from_a_file.cs" />
+    <Compile Include="when_seeding_an_empty_db_set_from_a_resource.cs" />
+    <Compile Include="when_seeding_a_populated_db_set_from_a_resource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +92,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <EmbeddedResource Include="CountriesResource.csv" />
+    <Content Include="CountriesFile.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
