@@ -23,22 +23,30 @@ namespace EntityFramework.Seeder
         /// <param name="additionalMapping">Any additonal complex mappings required</param>
         public static void SeedFromStream<T>(this IDbSet<T> dbSet, Stream stream, Expression<Func<T, object>> identifierExpression, params CsvColumnMapping<T>[] additionalMapping) where T : class
         {
-            using (StreamReader reader = new StreamReader(stream))
+            try
             {
-                CsvReader csvReader = new CsvReader(reader);
-                var map = csvReader.Configuration.AutoMap<T>();
-                map.ReferenceMaps.Clear();
-                csvReader.Configuration.RegisterClassMap(map);
-                csvReader.Configuration.WillThrowOnMissingField = false;
-                while (csvReader.Read())
+                using (StreamReader reader = new StreamReader(stream))
                 {
-                    var entity= csvReader.GetRecord<T>();
-                    foreach (CsvColumnMapping<T> csvColumnMapping in additionalMapping)
+                    CsvReader csvReader = new CsvReader(reader);
+                    var map = csvReader.Configuration.AutoMap<T>();
+                    map.ReferenceMaps.Clear();
+                    csvReader.Configuration.RegisterClassMap(map);
+                    csvReader.Configuration.WillThrowOnMissingField = false;
+                    while (csvReader.Read())
                     {
-                        csvColumnMapping.Execute(entity, csvReader.GetField(csvColumnMapping.CsvColumnName));
+                        var entity = csvReader.GetRecord<T>();
+                        foreach (CsvColumnMapping<T> csvColumnMapping in additionalMapping)
+                        {
+                            csvColumnMapping.Execute(entity, csvReader.GetField(csvColumnMapping.CsvColumnName));
+                        }
+                        dbSet.AddOrUpdate(identifierExpression, entity);
                     }
-                    dbSet.AddOrUpdate(identifierExpression, entity);
                 }
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("Error Seeding DbSet {0}: {1}", dbSet.GetType().Name, ex.Message);
+                throw new EfSeederException(message, ex);                
             }
         }
 
