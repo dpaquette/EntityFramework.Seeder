@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using EntityFramework.Seeder.EF6.Tests.Domain;
 using Given.Common;
 using Given.NUnit;
@@ -26,6 +28,41 @@ namespace EntityFramework.Seeder.EF6.Tests
         public void when_seeding_from_a_file_with_unmapped_columns()
         {
             _context.Countries.SeedFromFile("CountriesFileWithErrors.csv", c => c.Code);
+        }
+
+        [then]
+        public void the_exception_should_be_serializable()
+        {
+            EfSeederException exception = null;
+            try
+            {
+                _context.Countries.SeedFromFile("CountriesFileWithErrors.csv", c => c.Code);
+            }
+            catch (EfSeederException ex)
+            {
+                exception = ex;
+            }
+
+            Assert.IsNotNull(exception);
+
+            string exceptionToString = exception.ToString();
+
+            // Round-trip the exception: Serialize and de-serialize with a BinaryFormatter
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                // "Save" object state
+                bf.Serialize(ms, exception);
+
+                // Re-use the same stream for de-serialization
+                ms.Seek(0, 0);
+
+                // Replace the original exception with de-serialized one
+                exception = (EfSeederException)bf.Deserialize(ms);
+            }
+
+            // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
+            Assert.AreEqual(exceptionToString, exception.ToString(), "ex.ToString()");
         }
 
         [TestFixtureTearDown]

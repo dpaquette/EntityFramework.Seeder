@@ -46,7 +46,8 @@ namespace EntityFramework.Seeder
             catch (Exception ex)
             {
                 string message = string.Format("Error Seeding DbSet {0}: {1}", dbSet.GetType().Name, ex.Message);
-                throw new EfSeederException(message, ex);                
+                Exception innerException = ex.GetType().IsSerializable ? ex : null;
+                throw new EfSeederException(message, innerException);                
             }
         }
 

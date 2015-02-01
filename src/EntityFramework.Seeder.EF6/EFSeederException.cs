@@ -12,6 +12,7 @@ namespace EntityFramework.Seeder
     /// Wraps the underlying exception and is serializable so that the exception message can be
     ///   properly displayed in the package manager console in Visual Studio
     /// </summary>
+    [Serializable]
     public class EfSeederException : Exception, ISerializable
     {
         public EfSeederException()
