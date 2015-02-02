@@ -13,6 +13,22 @@ namespace EntityFramework.Seeder
     /// </summary>
     public static class Seeder
     {
+        static Seeder()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+        }
+
+        private static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+        {
+            if (new AssemblyName(args.Name).Name == "EntityFramework.Seeder.EF6")
+            {
+                return typeof (Seeder).Assembly;
+            }
+
+            return null;
+
+        }
+
         /// <summary>
         /// Seeds a DBSet from a CSV file that will be read from the specified stream
         /// </summary>
@@ -45,9 +61,10 @@ namespace EntityFramework.Seeder
             }
             catch (Exception ex)
             {
-                string message = string.Format("Error Seeding DbSet {0}: {1}", dbSet.GetType().Name, ex.Message);
+                string message = string.Format("Error Seeding DbSet<{0}>: {1}", dbSet.GetType().GenericTypeArguments[0].FullName, ex.ToString());
                 Exception innerException = ex.GetType().IsSerializable ? ex : null;
-                throw new EfSeederException(message, innerException);                
+                //Unfortunately I need to use a root exception here as this is the only way for the Update-Database powershell script to properly report the error
+                throw new Exception(message, innerException);                
             }
         }
 

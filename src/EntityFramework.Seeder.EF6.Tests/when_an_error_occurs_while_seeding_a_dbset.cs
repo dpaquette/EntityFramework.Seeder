@@ -24,7 +24,7 @@ namespace EntityFramework.Seeder.EF6.Tests
 
 
         [then]
-        [ExpectedException(typeof(EfSeederException))]
+        [ExpectedException(typeof(Exception))]
         public void when_seeding_from_a_file_with_unmapped_columns()
         {
             _context.Countries.SeedFromFile("CountriesFileWithErrors.csv", c => c.Code);
@@ -33,12 +33,12 @@ namespace EntityFramework.Seeder.EF6.Tests
         [then]
         public void the_exception_should_be_serializable()
         {
-            EfSeederException exception = null;
+            Exception exception = null;
             try
             {
                 _context.Countries.SeedFromFile("CountriesFileWithErrors.csv", c => c.Code);
             }
-            catch (EfSeederException ex)
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -58,7 +58,7 @@ namespace EntityFramework.Seeder.EF6.Tests
                 ms.Seek(0, 0);
 
                 // Replace the original exception with de-serialized one
-                exception = (EfSeederException)bf.Deserialize(ms);
+                exception = (Exception)bf.Deserialize(ms);
             }
 
             // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
