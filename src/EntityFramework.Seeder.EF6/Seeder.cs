@@ -13,6 +13,22 @@ namespace EntityFramework.Seeder
     /// </summary>
     public static class Seeder
     {
+        static Seeder()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+        }
+
+        private static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
+        {
+            if (new AssemblyName(args.Name).Name == "EntityFramework.Seeder.EF6")
+            {
+                return typeof (Seeder).Assembly;
+            }
+
+            return null;
+
+        }
+
         /// <summary>
         /// Seeds a DBSet from a CSV file that will be read from the specified stream
         /// </summary>
@@ -23,22 +39,32 @@ namespace EntityFramework.Seeder
         /// <param name="additionalMapping">Any additonal complex mappings required</param>
         public static void SeedFromStream<T>(this IDbSet<T> dbSet, Stream stream, Expression<Func<T, object>> identifierExpression, params CsvColumnMapping<T>[] additionalMapping) where T : class
         {
-            using (StreamReader reader = new StreamReader(stream))
+            try
             {
-                CsvReader csvReader = new CsvReader(reader);
-                var map = csvReader.Configuration.AutoMap<T>();
-                map.ReferenceMaps.Clear();
-                csvReader.Configuration.RegisterClassMap(map);
-                csvReader.Configuration.WillThrowOnMissingField = false;
-                while (csvReader.Read())
+                using (StreamReader reader = new StreamReader(stream))
                 {
-                    var entity= csvReader.GetRecord<T>();
-                    foreach (CsvColumnMapping<T> csvColumnMapping in additionalMapping)
+                    CsvReader csvReader = new CsvReader(reader);
+                    var map = csvReader.Configuration.AutoMap<T>();
+                    map.ReferenceMaps.Clear();
+                    csvReader.Configuration.RegisterClassMap(map);
+                    csvReader.Configuration.WillThrowOnMissingField = false;
+                    while (csvReader.Read())
                     {
-                        csvColumnMapping.Execute(entity, csvReader.GetField(csvColumnMapping.CsvColumnName));
+                        var entity = csvReader.GetRecord<T>();
+                        foreach (CsvColumnMapping<T> csvColumnMapping in additionalMapping)
+                        {
+                            csvColumnMapping.Execute(entity, csvReader.GetField(csvColumnMapping.CsvColumnName));
+                        }
+                        dbSet.AddOrUpdate(identifierExpression, entity);
                     }
-                    dbSet.AddOrUpdate(identifierExpression, entity);
                 }
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("Error Seeding DbSet<{0}>: {1}", dbSet.GetType().GenericTypeArguments[0].FullName, ex.ToString());
+                Exception innerException = ex.GetType().IsSerializable ? ex : null;
+                //Unfortunately I need to use a root exception here as this is the only way for the Update-Database powershell script to properly report the error
+                throw new Exception(message, innerException);                
             }
         }
 
