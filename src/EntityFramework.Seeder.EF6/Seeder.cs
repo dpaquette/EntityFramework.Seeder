@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using System;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -13,9 +14,22 @@ namespace EntityFramework.Seeder
     /// </summary>
     public static class Seeder
     {
+        private static CsvConfiguration _configuration; 
+
         static Seeder()
         {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+            _configuration = new CsvConfiguration();
+        }
+
+        public static CsvConfiguration Configuration
+        {
+            get { return _configuration; }
+        }
+
+        public static void ResetConfiguration()
+        {
+            _configuration = new CsvConfiguration();
         }
 
         private static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
@@ -40,10 +54,10 @@ namespace EntityFramework.Seeder
         public static void SeedFromStream<T>(this IDbSet<T> dbSet, Stream stream, Expression<Func<T, object>> identifierExpression, params CsvColumnMapping<T>[] additionalMapping) where T : class
         {
             try
-            {
+            {                
                 using (StreamReader reader = new StreamReader(stream))
                 {
-                    CsvReader csvReader = new CsvReader(reader);
+                    CsvReader csvReader = new CsvReader(reader, _configuration);
                     var map = csvReader.Configuration.AutoMap<T>();
                     map.ReferenceMaps.Clear();
                     csvReader.Configuration.RegisterClassMap(map);

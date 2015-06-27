@@ -12,7 +12,7 @@ A collection of helper methods to help seed entity framework databases. When see
 
 While this is managable for small amounts of data, our seed methods can become difficult to manage in many real world scenarios.
 
-Using EntiyFramework.Seeder, you can seed your database from CSV files. 
+Using EntiyFramework.Seeder, you can seed your database from CSV files.
 
 First, create a CSV file with column names matching the properties of your entity. In the case of Country, the file would look as follows
 
@@ -20,7 +20,7 @@ First, create a CSV file with column names matching the properties of your entit
     CA, Canada
     USA, United States
     etc...
-    
+
 
 Next, include the file in project that contains your Seed method and change the Build Action to Embedded Resource.
 
@@ -39,7 +39,7 @@ Loading data from a CSV file can be a little more complicated when there are rel
     US,AZ,Arizona
     US,AR,Arkansas
     US,CA,California
-    
+
 Now, specify a custom mapping action when seeding from the provinces csv:
 
     context.Countries.SeedFromResource("MyProject.SeedData.countries.csv", c => c.Code);
@@ -49,8 +49,16 @@ Now, specify a custom mapping action when seeding from the provinces csv:
                 {
                     state.Country = context.Countries.Single(c => c.Code == countryCode);
                 })
-             );       
+             );
+
+##CsvHelper Configuration
+Under the covers, EntityFramework.Helper uses CsvHelper to read the CSV files. CsvHelper Configuration can be changed by setting properties on the `Seeder.Configuration` property. For example, to change the delimiter to a | character:
+
+
+    Seeder.Configuration.Delimiter = "|";
+
+All configuration options available in [CsvHelper Configuration](http://joshclose.github.io/CsvHelper/#configuration) can be set here. Configuration changes are global and will apply to any Seed methods that are called after a configuration option is changed. If you need to reset to the default configuration, call the `Seeder.ResetConfiguration()` method.
+
 
 ##Available on Nuget
 PM> Install-Package EntityFramework.Seeder.EF6
-
