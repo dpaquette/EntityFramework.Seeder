@@ -80,6 +80,7 @@
     <Compile Include="Domain\CountryContext.cs" />
     <Compile Include="Domain\ProvinceState.cs" />
     <Compile Include="when_an_error_occurs_while_seeding_a_dbset.cs" />
+    <Compile Include="when_seeding_an_empty_db_set_from_a_pipe_delimited_file.cs" />
     <Compile Include="when_seeding_an_empty_db_set_from_a_file.cs" />
     <Compile Include="when_seeding_an_empty_db_set_from_a_resource.cs" />
     <Compile Include="when_seeding_a_dbset_with_related_entites.cs" />
@@ -100,6 +101,9 @@
     </Content>
     <EmbeddedResource Include="ProvinceStatesResource.csv" />
     <Content Include="CountriesFileWithErrors.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CountriesFilePipeDelimited.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
